@@ -52,3 +52,41 @@ export async function getAnswerFromSpoiler(page: Page): Promise<string> {
 
   return answer
 }
+
+/**
+ * Extract multiple answers from the Help modal's spoiler toggle.
+ * Used for DoubleInputChallenge pages that have two answers.
+ */
+export async function getAnswersFromSpoiler(page: Page): Promise<string[]> {
+  // 1. Click help icon (the "?" button in navbar).
+  const helpIcon = page.locator('nav').getByText('?').last()
+  await helpIcon.click()
+
+  // 2. Wait for help modal to open and find the spoiler toggle.
+  const spoilerLabel = page.getByText('Yes, I want to see the solution')
+  await spoilerLabel.waitFor({ timeout: 5000 })
+
+  // 3. Toggle the spoiler checkbox.
+  const checkbox = page.getByRole('checkbox')
+  await checkbox.evaluate((el: HTMLInputElement) => el.click())
+
+  // 4. Wait for Copy buttons to appear (one per answer).
+  const copyButtons = page.getByRole('button', { name: /copy/i })
+  await copyButtons.first().waitFor({ timeout: 5000 })
+
+  // 5. Extract all answers from containers with Copy buttons.
+  const answers: string[] = []
+  const count = await copyButtons.count()
+  for (let i = 0; i < count; i++) {
+    const container = copyButtons.nth(i).locator('..')
+    const text = ((await container.textContent()) ?? '').trim()
+    if (text) {
+      answers.push(text)
+    }
+  }
+
+  // 6. Close modal by clicking the X button.
+  await page.getByRole('button', { name: 'Close' }).click()
+
+  return answers
+}

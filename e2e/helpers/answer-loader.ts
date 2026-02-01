@@ -67,4 +67,4 @@ export function hasAnswerFile(
 }
 
 // Re-export spoiler loader for convenience.
-export { getAnswerFromSpoiler } from './spoiler-loader'
+export { getAnswerFromSpoiler, getAnswersFromSpoiler } from './spoiler-loader'

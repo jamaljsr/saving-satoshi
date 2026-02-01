@@ -30,24 +30,23 @@ export class MonacoHelper {
     await editor.click()
     await this.page.waitForTimeout(500)
 
-    // Select all and replace (Cmd+A on Mac, Ctrl+A on others).
-    // const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
-    // await this.page.keyboard.press(`${modifier}+a`)
-    // await this.page.waitForTimeout(500)
-
-    // Type new code (Monaco handles the replacement).
-    // await this.page.keyboard.type(code, { delay: 5 })
     await this.page.evaluate(
       ({ code, startLine }) => {
         const editors = (window as any).monaco?.editor?.getEditors()
+        // Use second-to-last editor (there may be a hidden diff editor).
         const editor = editors[editors.length - 2]
 
-        const value: string = editor.getValue()
-        const lines = value.split('\n')
-        const newLines = lines.slice(0, startLine - 1)
-        const newCode = newLines.join('\n')
-        console.log('newCode', { startLine, value, newCode })
-        editor.setValue(newCode + code)
+        if (startLine <= 1) {
+          // Replace entire content.
+          editor.setValue(code)
+        } else {
+          // Preserve lines before startLine.
+          const value: string = editor.getValue()
+          const lines = value.split('\n')
+          const newLines = lines.slice(0, startLine - 1)
+          const newCode = newLines.join('\n')
+          editor.setValue(newCode + code)
+        }
       },
       { code, startLine }
     )
@@ -60,7 +59,8 @@ export class MonacoHelper {
     return await this.page.evaluate(() => {
       // Access Monaco's model through the global monaco instance.
       const editors = (window as any).monaco?.editor?.getEditors()
-      return editors?.[0]?.getValue() || ''
+      // Use second-to-last editor (there may be a hidden diff editor).
+      return editors?.[editors.length - 2]?.getValue() || ''
     })
   }
 
