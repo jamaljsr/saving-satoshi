@@ -22,7 +22,7 @@ export class MonacoHelper {
   /**
    * Clear existing code and set new content.
    */
-  async setCode(code: string): Promise<void> {
+  async setCode(code: string, startLine: number): Promise<void> {
     await this.waitForReady()
     const editor = this.page.locator(MONACO_EDITOR)
 
@@ -37,10 +37,20 @@ export class MonacoHelper {
 
     // Type new code (Monaco handles the replacement).
     // await this.page.keyboard.type(code, { delay: 5 })
-    await this.page.evaluate((c) => {
-      const editor = (window as any).monaco?.editor?.getEditors()[0]
-      editor.setValue(c)
-    }, code)
+    await this.page.evaluate(
+      ({ code, startLine }) => {
+        const editors = (window as any).monaco?.editor?.getEditors()
+        const editor = editors[editors.length - 2]
+
+        const value: string = editor.getValue()
+        const lines = value.split('\n')
+        const newLines = lines.slice(0, startLine - 1)
+        const newCode = newLines.join('\n')
+        console.log('newCode', { startLine, value, newCode })
+        editor.setValue(newCode + code)
+      },
+      { code, startLine }
+    )
   }
 
   /**

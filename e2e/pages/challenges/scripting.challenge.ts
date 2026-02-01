@@ -1,12 +1,12 @@
 // e2e/pages/challenges/scripting.challenge.ts
-import { Page, Locator } from '@playwright/test'
-import { BasePage } from '../base.page'
+import { Locator, Page } from '@playwright/test'
 import { MonacoHelper } from '../../helpers/monaco.helper'
 import {
-  getRunButton,
   getLanguageTab,
+  getRunButton,
   SUCCESS_INDICATOR,
 } from '../../helpers/selectors'
+import { BasePage } from '../base.page'
 
 export class ScriptingChallengePage extends BasePage {
   private monaco: MonacoHelper
@@ -26,8 +26,8 @@ export class ScriptingChallengePage extends BasePage {
   /**
    * Set code in the Monaco editor.
    */
-  async setCode(code: string): Promise<void> {
-    await this.monaco.setCode(code)
+  async setCode(code: string, startLine: number): Promise<void> {
+    await this.monaco.setCode(code, startLine)
   }
 
   /**
@@ -66,20 +66,24 @@ export class ScriptingChallengePage extends BasePage {
   /**
    * Set code, run, and wait for success.
    */
-  async solveWith(code: string): Promise<void> {
-    await this.setCode(code)
+  async solveWith(code: string, startLine: number): Promise<void> {
+    await this.setCode(code, startLine)
     await this.runCode()
     await this.waitForSuccess()
   }
 
   /**
    * Switch language, set code, run, and wait for success.
+   * @param code - The code used to solve the challenge.
+   * @param language - The language to solve the code in.
+   * @param startLine - The line number to start the code at. Existing code will be preserved.
    */
   async solveWithLanguage(
     code: string,
-    language: 'javascript' | 'python'
+    language: 'javascript' | 'python',
+    startLine = 1
   ): Promise<void> {
     await this.switchLanguage(language)
-    await this.solveWith(code)
+    await this.solveWith(code, startLine)
   }
 }
