@@ -410,7 +410,7 @@ export const LESSONS: LessonInfo[] = [
     key: 'CH7MPT1',
     slug: 'mempool-transaction-1',
     chapter: 7,
-    challengeType: 'transactions',
+    challengeType: 'scripting',
   },
   {
     key: 'CH7OUT1',
