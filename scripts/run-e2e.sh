@@ -14,41 +14,41 @@
 
 set -e
 cd "$(dirname "$0")/.."
+pwd
 
-CONFIG="e2e/playwright.config.ts"
 TARGET="${1}"
 
 case "$TARGET" in
   ui)
-    npx playwright test --config="$CONFIG" --ui
+    npx playwright test --ui
     ;;
   smoke)
-    npx playwright test --config="$CONFIG" e2e/tests/smoke/
+    npx playwright test e2e/tests/smoke/
     ;;
   full:js)
-    npx playwright test --config="$CONFIG" e2e/tests/full-course/ --project=javascript
+    npx playwright test e2e/tests/full-course/ --project=javascript
     ;;
   full:py)
-    npx playwright test --config="$CONFIG" e2e/tests/full-course/ --project=python
+    npx playwright test e2e/tests/full-course/ --project=python
     ;;
   [0-9]:js)
     CHAPTER="${TARGET%:js}"
-    npx playwright test --config="$CONFIG" "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript
     ;;
   [0-9]:py)
     CHAPTER="${TARGET%:py}"
-    npx playwright test --config="$CONFIG" "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python
     ;;
   [0-9][0-9]:js)
     CHAPTER="${TARGET%:js}"
-    npx playwright test --config="$CONFIG" "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript
     ;;
   [0-9][0-9]:py)
     CHAPTER="${TARGET%:py}"
-    npx playwright test --config="$CONFIG" "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python
     ;;
   all)
-    npx playwright test --config="$CONFIG"
+    npx playwright test
     ;;
   *)
     echo "Unknown target: $TARGET"

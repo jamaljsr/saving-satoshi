@@ -28,13 +28,19 @@ export class MonacoHelper {
 
     // Focus the editor.
     await editor.click()
+    await this.page.waitForTimeout(500)
 
     // Select all and replace (Cmd+A on Mac, Ctrl+A on others).
-    const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
-    await this.page.keyboard.press(`${modifier}+a`)
+    // const modifier = process.platform === 'darwin' ? 'Meta' : 'Control'
+    // await this.page.keyboard.press(`${modifier}+a`)
+    // await this.page.waitForTimeout(500)
 
     // Type new code (Monaco handles the replacement).
-    await this.page.keyboard.type(code, { delay: 5 })
+    // await this.page.keyboard.type(code, { delay: 5 })
+    await this.page.evaluate((c) => {
+      const editor = (window as any).monaco?.editor?.getEditors()[0]
+      editor.setValue(c)
+    }, code)
   }
 
   /**

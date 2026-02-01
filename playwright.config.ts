@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
-export default defineConfig({
-  testDir: './tests',
+export default defineConfig<{ language: 'javascript' | 'python' }>({
+  testDir: './e2e/tests',
   fullyParallel: false,
   workers: 1,
 
@@ -32,6 +32,5 @@ export default defineConfig({
     command: 'yarn dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    cwd: '..', // Run from repo root
   },
 })

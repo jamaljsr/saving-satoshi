@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test'
+import { expect, Locator, Page } from '@playwright/test'
 
 /**
  * Page Object Model for authentication modals (Sign In, Sign Up, Account Info).

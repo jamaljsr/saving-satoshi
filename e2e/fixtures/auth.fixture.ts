@@ -79,4 +79,13 @@ export class AuthHelper {
   getToken(): string | null {
     return this.token
   }
+
+  /**
+   * Sync token from browser localStorage (after UI-based signup).
+   */
+  async syncFromBrowser(): Promise<void> {
+    this.token = await this.page.evaluate(() => {
+      return localStorage.getItem('saving-satoshi-token')
+    })
+  }
 }

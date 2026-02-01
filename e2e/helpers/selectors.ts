@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test'
+import { Locator, Page } from '@playwright/test'
 
 /**
  * Centralized selector utilities for e2e tests.
@@ -24,7 +24,7 @@ export function getLanguageTab(
   page: Page,
   language: 'javascript' | 'python'
 ): Locator {
-  return page.getByRole('tab', { name: new RegExp(language, 'i') })
+  return page.getByRole('button', { name: new RegExp(language, 'i') })
 }
 
 export function getSuccessText(page: Page): Locator {
