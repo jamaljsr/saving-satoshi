@@ -15,7 +15,7 @@ export class LessonPage extends BasePage {
    */
   async navigateToChapter(chapter: number, lang = 'en'): Promise<void> {
     await this.page.goto(`/${lang}`)
-    await this.page.getByRole('link', { name: /start/i }).click()
+    await this.page.getByRole('link', { name: /start|continue/i }).click()
     await this.page
       .getByRole('link', {
         name: new RegExp(`start.*${chapter}|chapter.*${chapter}`, 'i'),

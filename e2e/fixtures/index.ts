@@ -1,6 +1,7 @@
 // e2e/fixtures/index.ts
 import { test as base } from '@playwright/test'
 import { AuthHelper } from './auth.fixture'
+import { AuthModal } from '../pages/auth.modal'
 import { LessonPage } from '../pages/lesson.page'
 import { ChaptersPage } from '../pages/chapters.page'
 import {
@@ -18,6 +19,7 @@ export type Language = 'javascript' | 'python'
 type Fixtures = {
   language: Language
   auth: AuthHelper
+  authModal: AuthModal
   lessonPage: LessonPage
   chaptersPage: ChaptersPage
   scriptingChallenge: ScriptingChallengePage
@@ -37,6 +39,11 @@ export const test = base.extend<Fixtures>({
   auth: async ({ page, request }, use) => {
     const auth = new AuthHelper(page, request)
     await use(auth)
+  },
+
+  // Auth modal POM for UI-based auth flows.
+  authModal: async ({ page }, use) => {
+    await use(new AuthModal(page))
   },
 
   // Page Object Models - auto-instantiated for each test.
@@ -83,3 +90,4 @@ export {
   buildProgressUpToLesson,
 } from './progress.fixture'
 export type { AuthHelper } from './auth.fixture'
+export type { AuthModal } from '../pages/auth.modal'
