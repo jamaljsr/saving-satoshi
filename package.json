@@ -10,6 +10,7 @@
     "prettier": "prettier --write --ignore-unknown .",
     "prettier:check": "prettier --check --ignore-unknown .",
     "test": "yarn prettier:check && yarn lint && yarn jest",
+    "e2e": "sh ./scripts/run-e2e.sh",
     "postinstall": "husky install"
   },
   "lint-staged": {
@@ -46,6 +47,7 @@
     "use-local-storage-state": "^18.1.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.41.0",
     "@svgr/webpack": "^6.5.1",
     "@types/jest": "^29.5.11",
     "@types/node": "22.0.0",

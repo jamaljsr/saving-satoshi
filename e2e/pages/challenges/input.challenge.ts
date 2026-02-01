@@ -1,0 +1,46 @@
+// e2e/pages/challenges/input.challenge.ts
+import { Page, Locator } from '@playwright/test'
+import { BasePage } from '../base.page'
+import { getInputField, getSubmitButton } from '../../helpers/selectors'
+
+export class InputChallengePage extends BasePage {
+  constructor(page: Page) {
+    super(page)
+  }
+
+  /**
+   * Enter text into the challenge input field.
+   */
+  async enterAnswer(text: string): Promise<void> {
+    const input = getInputField(this.page)
+    await input.fill(text)
+  }
+
+  /**
+   * Type answer slowly (for animations or debounced inputs).
+   */
+  async typeSlowly(text: string, delay = 100): Promise<void> {
+    const input = getInputField(this.page)
+    await input.click()
+    await this.page.keyboard.type(text, { delay })
+  }
+
+  /**
+   * Submit the answer.
+   */
+  async submit(): Promise<void> {
+    const submitBtn = getSubmitButton(this.page)
+    if (await submitBtn.isVisible()) {
+      await submitBtn.click()
+    }
+  }
+
+  /**
+   * Enter answer and wait for success.
+   */
+  async solveWith(answer: string): Promise<void> {
+    await this.enterAnswer(answer)
+    await this.submit()
+    await this.waitForSuccess()
+  }
+}
