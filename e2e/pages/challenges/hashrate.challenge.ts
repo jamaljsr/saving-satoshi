@@ -1,7 +1,7 @@
 // e2e/pages/challenges/hashrate.challenge.ts
 import { Page } from '@playwright/test'
 import { BasePage } from '../base.page'
-import { getStartButton } from '../../helpers/selectors'
+import { getStartButton, getContinueButton } from '../../helpers/selectors'
 
 export class HashRateChallengePage extends BasePage {
   constructor(page: Page) {
@@ -18,9 +18,17 @@ export class HashRateChallengePage extends BasePage {
 
   /**
    * Wait for the mining simulation to complete.
+   * Chapter 3 hashrate challenges show various buttons when done:
+   * - "Continue" (most challenges)
+   * - "Tell me more" (split-2, which has multi-step explanation)
    */
   async waitForCompletion(timeout = 60000): Promise<void> {
-    await this.waitForSuccess(timeout)
+    // Wait for either success text or a completion button to appear.
+    const completionLocator = this.page
+      .getByRole('button', { name: /continue|tell me more/i })
+      .or(this.page.getByText(/nicely done|success/i))
+      .first()
+    await completionLocator.waitFor({ timeout })
   }
 
   /**
