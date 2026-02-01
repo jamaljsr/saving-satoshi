@@ -13,6 +13,13 @@ export class ChapterSection {
   }
 
   /**
+   * Locator for the difficulty toggle switch.
+   */
+  get difficultyToggle(): Locator {
+    return this.section.locator('.toggle-switch .slider')
+  }
+
+  /**
    * Locator for the Challenges tab button.
    */
   get challengesButton(): Locator {
@@ -32,6 +39,13 @@ export class ChapterSection {
    */
   async clickChallenges(): Promise<void> {
     await this.challengesButton.click()
+  }
+
+  /**
+   * Click the difficulty toggle switch to toggle the difficulty.
+   */
+  async toggleDifficulty(): Promise<void> {
+    await this.difficultyToggle.click()
   }
 }
 

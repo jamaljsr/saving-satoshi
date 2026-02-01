@@ -50,7 +50,7 @@ export class ScriptingChallengePage extends BasePage {
    */
   async switchLanguage(language: 'javascript' | 'python'): Promise<void> {
     const tab = getLanguageTab(this.page, language)
-    await tab.click()
+    await tab.last().click()
     // Wait for Monaco to reinitialize with new language.
     await this.page.waitForTimeout(300)
     await this.monaco.waitForReady()

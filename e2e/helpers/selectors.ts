@@ -48,9 +48,11 @@ export function getStartButton(page: Page): Locator {
  * Different pages use different button text for progression.
  */
 export function getProgressButton(page: Page): Locator {
-  return page.getByRole('button', {
-    name: /continue|next|start|complete|let's go|tell me more/i,
-  })
+  return page
+    .getByRole('button', {
+      name: /continue|next|start|complete|let's go|tell me more/i,
+    })
+    .last()
 }
 
 export function getSubmitButton(page: Page): Locator {

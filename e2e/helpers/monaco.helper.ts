@@ -33,8 +33,23 @@ export class MonacoHelper {
     await this.page.evaluate(
       ({ code, startLine }) => {
         const editors = (window as any).monaco?.editor?.getEditors()
-        // Use second-to-last editor (there may be a hidden diff editor).
-        const editor = editors[editors.length - 2]
+        // Find the visible editor by checking which one's DOM node is visible.
+        const editor = editors.find((e: any) => {
+          const domNode = e.getDomNode()
+          if (!domNode) return false
+          const rect = domNode.getBoundingClientRect()
+          // Check if the editor has positive dimensions and is in the viewport.
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.top < window.innerHeight &&
+            rect.bottom > 0
+          )
+        })
+
+        if (!editor) {
+          throw new Error('No visible Monaco editor found')
+        }
 
         if (startLine <= 1) {
           // Replace entire content.
@@ -59,8 +74,25 @@ export class MonacoHelper {
     return await this.page.evaluate(() => {
       // Access Monaco's model through the global monaco instance.
       const editors = (window as any).monaco?.editor?.getEditors()
-      // Use second-to-last editor (there may be a hidden diff editor).
-      return editors?.[editors.length - 2]?.getValue() || ''
+      // Find the visible editor by checking which one's DOM node is visible.
+      const editor = editors?.find((e: any) => {
+        const domNode = e.getDomNode()
+        if (!domNode) return false
+        const rect = domNode.getBoundingClientRect()
+        // Check if the editor has positive dimensions and is in the viewport.
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          rect.top < window.innerHeight &&
+          rect.bottom > 0
+        )
+      })
+
+      if (!editor) {
+        throw new Error('No visible Monaco editor found')
+      }
+
+      return editor.getValue()
     })
   }
 
