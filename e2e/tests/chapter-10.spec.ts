@@ -1,5 +1,5 @@
-import { expect, test } from '../../fixtures'
-import { getTransactionAnswer } from '../../helpers/answer-loader'
+import { expect, test } from '../fixtures'
+import { getTransactionAnswer } from '../helpers/answer-loader'
 
 /**
  * Chapter 10 E2E tests.

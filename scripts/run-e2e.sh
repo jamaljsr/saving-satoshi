@@ -4,13 +4,12 @@
 
 set -e
 cd "$(dirname "$0")/.."
-pwd
 
 TARGET="${1}"
 
 case "$TARGET" in
   smoke)
-    npx playwright test e2e/tests/smoke/
+    npx playwright test e2e/tests/navigation.spec.ts
     ;;
   all)
     npx playwright test
@@ -23,19 +22,19 @@ case "$TARGET" in
     ;;
   [0-9]:js)
     CHAPTER="${TARGET%:js}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript --headed
+    npx playwright test "e2e/tests/chapter-${CHAPTER}.spec.ts" --project=javascript --headed
     ;;
   [0-9]:py)
     CHAPTER="${TARGET%:py}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python --headed
+    npx playwright test "e2e/tests/chapter-${CHAPTER}.spec.ts" --project=python --headed
     ;;
   [0-9][0-9]:js)
     CHAPTER="${TARGET%:js}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript --headed
+    npx playwright test "e2e/tests/chapter-${CHAPTER}.spec.ts" --project=javascript --headed
     ;;
   [0-9][0-9]:py)
     CHAPTER="${TARGET%:py}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python --headed
+    npx playwright test "e2e/tests/chapter-${CHAPTER}.spec.ts" --project=python --headed
     ;;
   ui)
     npx playwright test --ui
@@ -45,8 +44,8 @@ case "$TARGET" in
     echo "Usage: yarn e2e [target]"
     echo ""
     echo "Targets:"
-    echo "  all       - Run all tests (default)"
-    echo "  smoke     - Run smoke tests"
+    echo "  all       - Run all tests (JavaScript and Python)"
+    echo "  smoke     - Run smoke tests (basic site navigation)"
     echo "  N:js      - Chapter N with JavaScript (e.g., 1:js, 10:js)"
     echo "  N:py      - Chapter N with Python (e.g., 1:py, 10:py)"
     echo "  ui        - Open Playwright UI mode"

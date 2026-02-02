@@ -1,9 +1,9 @@
-import { expect, test } from '../../fixtures'
+import { expect, test } from '../fixtures'
 import {
   getAnswerFromFile,
   getAnswerFromSpoiler,
   getAnswersFromSpoiler,
-} from '../../helpers/answer-loader'
+} from '../helpers/answer-loader'
 
 /**
  * Chapter 5 E2E tests.

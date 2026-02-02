@@ -1,6 +1,10 @@
 import { defineConfig, devices } from '@playwright/test'
 
-export default defineConfig<{ language: 'javascript' | 'python' }>({
+interface ProjectOptions {
+  language: 'javascript' | 'python'
+}
+
+export default defineConfig<ProjectOptions>({
   testDir: './e2e/tests',
   fullyParallel: true,
 
@@ -28,8 +32,8 @@ export default defineConfig<{ language: 'javascript' | 'python' }>({
   ],
 
   webServer: {
-    command: 'if ! lsof -i:3000 | grep LISTEN; then yarn dev; fi',
+    command: 'yarn dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
   },
 })

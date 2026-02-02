@@ -1,5 +1,5 @@
-import { expect, test } from '../../fixtures'
-import { getOpcodeAnswer } from '../../helpers/answer-loader'
+import { expect, test } from '../fixtures'
+import { getOpcodeAnswer } from '../helpers/answer-loader'
 
 /**
  * Chapter 9 E2E tests.
