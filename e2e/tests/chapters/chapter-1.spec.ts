@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-1.spec.ts
 import { expect, test } from '../../fixtures'
 import { getAnswerFromSpoiler } from '../../helpers/answer-loader'
 
@@ -10,8 +9,6 @@ import { getAnswerFromSpoiler } from '../../helpers/answer-loader'
  * - Authenticated: User logs in first, completes chapter, goes directly to chapters page
  */
 test.describe('Chapter 1: Genesis', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 1 (unauthenticated)', async ({
     page,
     lessonPage,

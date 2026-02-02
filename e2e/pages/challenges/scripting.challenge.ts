@@ -1,4 +1,3 @@
-// e2e/pages/challenges/scripting.challenge.ts
 import { Locator, Page } from '@playwright/test'
 import { MonacoHelper } from '../../helpers/monaco.helper'
 import {

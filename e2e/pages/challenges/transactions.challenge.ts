@@ -1,4 +1,3 @@
-// e2e/pages/challenges/transactions.challenge.ts
 import { Page } from '@playwright/test'
 import { BasePage } from '../base.page'
 

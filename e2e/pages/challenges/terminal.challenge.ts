@@ -1,4 +1,3 @@
-// e2e/pages/challenges/terminal.challenge.ts
 import { Page, Locator } from '@playwright/test'
 import { BasePage } from '../base.page'
 import { getTerminal, getTerminalInput } from '../../helpers/selectors'

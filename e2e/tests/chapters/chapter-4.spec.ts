@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-4.spec.ts
 import { expect, test } from '../../fixtures'
 import { getAnswerFromFile } from '../../helpers/answer-loader'
 
@@ -13,8 +12,6 @@ import { getAnswerFromFile } from '../../helpers/answer-loader'
  * - 4 scripting challenges (public-key-3, public-key-4, address-2, address-3)
  */
 test.describe('Chapter 4: Claiming Your 1.61 Bitcoin', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 4', async ({
     page,
     auth,
@@ -31,12 +28,8 @@ test.describe('Chapter 4: Claiming Your 1.61 Bitcoin', () => {
     await page.goto('/en')
     await authModal.signUp('red spacesuit')
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Now set progress to have chapters 1-3 completed via API.
-    await auth.skipToChapter(4)
+    await auth.setProgressToChapter(4)
 
     // Navigate to chapters page and wait for chapter 4 to be unlocked.
     await page.goto('/en/chapters')

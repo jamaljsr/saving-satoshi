@@ -1,5 +1,5 @@
-// e2e/tests/chapters/chapter-3.spec.ts
 import { expect, test } from '../../fixtures'
+
 import type { Page } from '@playwright/test'
 
 /**
@@ -15,27 +15,7 @@ import type { Page } from '@playwright/test'
  * - coop-3: Coop vs BitRey
  * - split-2: Split vs BitRey (with multi-step explanation after)
  */
-
-/**
- * After split-2 mining simulation completes, there's a multi-step explanation
- * with several "Tell me more" screens before reaching outro-1.
- * This helper clicks through all explanation steps.
- */
-async function clickThroughSplit2Explanation(page: Page): Promise<void> {
-  // Keep clicking "Tell me more" or "Continue" until we reach outro-1.
-  while (!(await page.url()).includes('outro-1')) {
-    const progressBtn = page.getByRole('button', {
-      name: /tell me more|continue/i,
-    })
-    await progressBtn.waitFor({ timeout: 10000 })
-    await progressBtn.click()
-    // Brief wait for navigation.
-    await page.waitForTimeout(500)
-  }
-}
 test.describe('Chapter 3: The 51% Attack', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 3', async ({
     page,
     auth,
@@ -51,12 +31,8 @@ test.describe('Chapter 3: The 51% Attack', () => {
     await page.goto('/en')
     await authModal.signUp('red spacesuit')
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Now set progress to have chapters 1-2 completed via API.
-    await auth.skipToChapter(3)
+    await auth.setProgressToChapter(3)
 
     // Navigate to chapters page and wait for chapter 3 to be unlocked.
     await page.goto('/en/chapters')
@@ -137,3 +113,21 @@ test.describe('Chapter 3: The 51% Attack', () => {
     await expect(chapter3.checkIcons).toHaveCount(10)
   })
 })
+
+/**
+ * After split-2 mining simulation completes, there's a multi-step explanation
+ * with several "Tell me more" screens before reaching outro-1.
+ * This helper clicks through all explanation steps.
+ */
+async function clickThroughSplit2Explanation(page: Page): Promise<void> {
+  // Keep clicking "Tell me more" or "Continue" until we reach outro-1.
+  while (!(await page.url()).includes('outro-1')) {
+    const progressBtn = page.getByRole('button', {
+      name: /tell me more|continue/i,
+    })
+    await progressBtn.waitFor({ timeout: 10000 })
+    await progressBtn.click()
+    // Brief wait for navigation.
+    await page.waitForTimeout(500)
+  }
+}

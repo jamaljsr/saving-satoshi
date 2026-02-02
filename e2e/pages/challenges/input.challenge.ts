@@ -1,4 +1,3 @@
-// e2e/pages/challenges/input.challenge.ts
 import { Page, Locator } from '@playwright/test'
 import { BasePage } from '../base.page'
 import { getInputField, getSubmitButton } from '../../helpers/selectors'

@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-9.spec.ts
 import { expect, test } from '../../fixtures'
 import { getOpcodeAnswer } from '../../helpers/answer-loader'
 
@@ -8,24 +7,10 @@ import { getOpcodeAnswer } from '../../helpers/answer-loader'
  * Chapter 9 requires authentication and chapters 1-8 to be completed.
  * Tests use auth.skipToChapter(9) to skip directly to chapter 9.
  *
- * Chapter 9 is about Bitcoin opcodes and script programming. The user learns
- * about the stack, opcodes, multisig, timelocks, and conditional logic.
- *
- * Lessons (17 total):
- * - 2 intros (intro-1, intro-2)
- * - 10 opcodes lessons (opcodes-1 through opcodes-10)
- *   - opcodes-1 to 4: narrative (ChapterIntro)
- *   - opcodes-5, 6, 8, 9, 10: opcode challenges (pre-populated, 5 total)
- *   - opcodes-7: narrative (multisig intro)
- * - 4 proposal lessons (proposal-1 through proposal-4)
- *   - proposal-1: narrative
- *   - proposal-2: opcode challenge (user builds script)
- *   - proposal-3, 4: advanced opcode challenges (two-step)
- * - 1 outro (outro-1)
+ * Chapter 9 is about Bitcoin opcodes and script programming.
+ * Challenge types: 8 opcode challenges (opcodes-5, 6, 8, 9, 10 and proposal-2, 3, 4).
  */
 test.describe('Chapter 9: Opcodes', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 9', async ({
     page,
     auth,
@@ -40,12 +25,8 @@ test.describe('Chapter 9: Opcodes', () => {
     await page.goto('/en')
     await authModal.signUp()
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Set progress to have chapters 1-8 completed via API.
-    await auth.skipToChapter(9)
+    await auth.setProgressToChapter(9)
 
     // Navigate to chapters page and wait for chapter 9 to be unlocked.
     await page.goto('/en/chapters')

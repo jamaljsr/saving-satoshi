@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-2.spec.ts
 import { expect, test } from '../../fixtures'
 import { getAnswerFromFile } from '../../helpers/answer-loader'
 
@@ -14,8 +13,6 @@ import { getAnswerFromFile } from '../../helpers/answer-loader'
  * - 1 complex interactive lesson (mining-1)
  */
 test.describe('Chapter 2: Hashing Out a Plan', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 2', async ({
     page,
     auth,
@@ -33,12 +30,8 @@ test.describe('Chapter 2: Hashing Out a Plan', () => {
     await page.goto('/en')
     await authModal.signUp('red spacesuit')
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Now set progress to have chapter 1 completed via API.
-    await auth.skipToChapter(2)
+    await auth.setProgressToChapter(2)
 
     // Navigate to chapters page and wait for chapter 2 to be unlocked.
     await page.goto('/en/chapters')
@@ -143,7 +136,7 @@ async function solveMining1(page: import('@playwright/test').Page) {
 
   // Step 2: After first block, click "Turn on" again to continue.
   // Wait for first block (step transitions from 1 to 2).
-  await turnOnButton.click({ timeout: 6_000 })
+  await turnOnButton.click({ timeout: 10_000 })
 
   // Step 3: Click 100x button to speed up mining.
   // Wait for 100x hint to appear (7 seconds after step 3 starts).

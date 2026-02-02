@@ -1,18 +1,17 @@
-// e2e/fixtures/index.ts
 import { test as base } from '@playwright/test'
-import { AuthHelper } from './auth.fixture'
 import { AuthModal } from '../pages/auth.modal'
-import { LessonPage } from '../pages/lesson.page'
-import { ChaptersPage } from '../pages/chapters.page'
 import {
-  ScriptingChallengePage,
-  InputChallengePage,
   HashChallengePage,
   HashRateChallengePage,
-  TerminalChallengePage,
+  InputChallengePage,
   OpCodeChallengePage,
+  ScriptingChallengePage,
+  TerminalChallengePage,
   TransactionsChallengePage,
 } from '../pages/challenges'
+import { ChaptersPage } from '../pages/chapters.page'
+import { LessonPage } from '../pages/lesson.page'
+import { AuthHelper } from './auth.fixture'
 
 export type Language = 'javascript' | 'python'
 
@@ -84,10 +83,6 @@ export const test = base.extend<Fixtures>({
   },
 })
 
+// Re-export expect from Playwright test so tests can import both expect and test from
+// this file.
 export { expect } from '@playwright/test'
-export {
-  buildProgressForChapter,
-  buildProgressUpToLesson,
-} from './progress.fixture'
-export type { AuthHelper } from './auth.fixture'
-export type { AuthModal } from '../pages/auth.modal'

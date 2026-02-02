@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-7.spec.ts
 import { expect, test } from '../../fixtures'
 import { getAnswerFromFile } from '../../helpers/answer-loader'
 
@@ -8,18 +7,10 @@ import { getAnswerFromFile } from '../../helpers/answer-loader'
  * Chapter 7 requires authentication and chapters 1-6 to be completed.
  * Tests use auth.skipToChapter(7) to skip directly to chapter 7.
  *
- * Chapter 7 is about building blocks from mempool transactions. The user must
- * implement a block assembly algorithm that maximizes fees while respecting
- * weight limits and transaction dependencies.
- *
- * Lessons (5 total):
- * - 3 intros (intro-1, intro-2, intro-3)
- * - 1 scripting challenge (mempool-transaction-1)
- * - 1 outro
+ * Chapter 7 is about building blocks from mempool transactions.
+ * Challenge types: 1 scripting challenge (mempool-transaction-1).
  */
 test.describe('Chapter 7: Offense is the Best Defense', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 7', async ({
     page,
     auth,
@@ -33,12 +24,8 @@ test.describe('Chapter 7: Offense is the Best Defense', () => {
     await page.goto('/en')
     await authModal.signUp()
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Set progress to have chapters 1-6 completed via API.
-    await auth.skipToChapter(7)
+    await auth.setProgressToChapter(7)
 
     // Navigate to chapters page and wait for chapter 7 to be unlocked.
     await page.goto('/en/chapters')

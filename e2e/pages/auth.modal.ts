@@ -94,6 +94,14 @@ export class AuthModal {
     await this.acknowledgeKeyBackup()
     await this.doneButton.click()
     await this.page.waitForLoadState('networkidle')
+    // Wait until the saving-satoshi-token exists in localStorage
+    await this.page.waitForFunction(
+      () => !!window.localStorage.getItem('saving-satoshi-token'),
+      undefined,
+      { timeout: 5000 }
+    )
+    // Add an additional delay to reduce flakiness
+    await this.page.waitForTimeout(500)
     return privateKey
   }
 

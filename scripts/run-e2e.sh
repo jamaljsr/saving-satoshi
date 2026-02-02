@@ -1,16 +1,6 @@
 #!/bin/bash
 # E2E test runner - takes argument to determine which tests to run
 # Usage: yarn e2e [target]
-#
-# Examples:
-#   yarn e2e              # Show help
-#   yarn e2e all          # Run all tests (both JS and Python)
-#   yarn e2e full:js      # Run full course with JavaScript
-#   yarn e2e full:py      # Run full course with Python
-#   yarn e2e 1:js         # Run chapter 1 with JavaScript
-#   yarn e2e 1:py         # Run chapter 1 with Python
-#   yarn e2e smoke        # Run smoke tests only
-#   yarn e2e ui           # Open Playwright UI mode
 
 set -e
 cd "$(dirname "$0")/.."
@@ -19,36 +9,36 @@ pwd
 TARGET="${1}"
 
 case "$TARGET" in
-  ui)
-    npx playwright test --ui
-    ;;
   smoke)
     npx playwright test e2e/tests/smoke/
     ;;
-  full:js)
-    npx playwright test e2e/tests/full-course/ --project=javascript
+  all)
+    npx playwright test
     ;;
-  full:py)
-    npx playwright test e2e/tests/full-course/ --project=python
+  all:js)
+    npx playwright test --project=javascript
+    ;;
+  all:py)
+    npx playwright test --project=python
     ;;
   [0-9]:js)
     CHAPTER="${TARGET%:js}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript --headed
     ;;
   [0-9]:py)
     CHAPTER="${TARGET%:py}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python --headed
     ;;
   [0-9][0-9]:js)
     CHAPTER="${TARGET%:js}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=javascript --headed
     ;;
   [0-9][0-9]:py)
     CHAPTER="${TARGET%:py}"
-    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python
+    npx playwright test "e2e/tests/chapters/chapter-${CHAPTER}.spec.ts" --project=python --headed
     ;;
-  all)
-    npx playwright test
+  ui)
+    npx playwright test --ui
     ;;
   *)
     echo "Unknown target: $TARGET"
@@ -57,11 +47,11 @@ case "$TARGET" in
     echo "Targets:"
     echo "  all       - Run all tests (default)"
     echo "  smoke     - Run smoke tests"
-    echo "  full:js   - Full course with JavaScript"
-    echo "  full:py   - Full course with Python"
     echo "  N:js      - Chapter N with JavaScript (e.g., 1:js, 10:js)"
     echo "  N:py      - Chapter N with Python (e.g., 1:py, 10:py)"
     echo "  ui        - Open Playwright UI mode"
+    echo ""
+    echo "Individual chapter tests will show a browser window while running the tests."
     exit 1
     ;;
 esac

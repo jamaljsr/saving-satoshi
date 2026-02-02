@@ -2,13 +2,12 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig<{ language: 'javascript' | 'python' }>({
   testDir: './e2e/tests',
-  fullyParallel: false,
-  workers: 1,
+  fullyParallel: true,
 
-  // Headed locally, headless in CI.
   use: {
-    headless: !!process.env.CI,
     baseURL: 'http://localhost:3000',
+    viewport: { width: 1920, height: 1080 },
+    screenshot: 'only-on-failure',
   },
 
   projects: [
@@ -29,8 +28,8 @@ export default defineConfig<{ language: 'javascript' | 'python' }>({
   ],
 
   webServer: {
-    command: 'yarn dev',
+    command: 'if ! lsof -i:3000 | grep LISTEN; then yarn dev; fi',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
   },
 })

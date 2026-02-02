@@ -1,4 +1,3 @@
-// e2e/pages/challenges/index.ts
 export { InputChallengePage } from './input.challenge'
 export { ScriptingChallengePage } from './scripting.challenge'
 export { HashChallengePage } from './hash.challenge'

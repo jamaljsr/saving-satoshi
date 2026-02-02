@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-8.spec.ts
 import { expect, test } from '../../fixtures'
 import { getAnswerFromFile } from '../../helpers/answer-loader'
 
@@ -8,21 +7,10 @@ import { getAnswerFromFile } from '../../helpers/answer-loader'
  * Chapter 8 requires authentication and chapters 1-7 to be completed.
  * Tests use auth.skipToChapter(8) to skip directly to chapter 8.
  *
- * Chapter 8 is about building blocks and block validation. The user learns
- * about Bitcoin RPC calls, block headers, transaction fees, subsidies, and
- * how to validate blocks.
- *
- * Lessons (12 total):
- * - 3 intros (intro-1, intro-2, intro-3)
- * - 8 building blocks lessons (building-blocks-1 through building-blocks-8)
- *   - building-blocks-1: narrative (ChapterIntro)
- *   - building-blocks-2: narrative (Introduction)
- *   - building-blocks-3 to 8: scripting challenges (6 total)
- * - 1 outro (outro-1)
+ * Chapter 8 is about building blocks and block validation.
+ * Challenge types: 6 scripting challenges (building-blocks-3 through 8).
  */
 test.describe('Chapter 8: Building Blocks', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 8', async ({
     page,
     auth,
@@ -36,12 +24,8 @@ test.describe('Chapter 8: Building Blocks', () => {
     await page.goto('/en')
     await authModal.signUp()
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Set progress to have chapters 1-7 completed via API.
-    await auth.skipToChapter(8)
+    await auth.setProgressToChapter(8)
 
     // Navigate to chapters page and wait for chapter 8 to be unlocked.
     await page.goto('/en/chapters')

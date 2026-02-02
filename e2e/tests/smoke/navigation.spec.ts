@@ -1,4 +1,3 @@
-// e2e/tests/smoke/navigation.spec.ts
 import { expect, test } from '../../fixtures'
 
 test.describe('Smoke Tests', () => {

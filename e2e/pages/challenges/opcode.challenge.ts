@@ -1,40 +1,10 @@
-// e2e/pages/challenges/opcode.challenge.ts
 import { Page } from '@playwright/test'
-import { BasePage } from '../base.page'
 import { OpcodeAnswer } from '../../helpers/answer-loader'
+import { BasePage } from '../base.page'
 
 export class OpCodeChallengePage extends BasePage {
   constructor(page: Page) {
     super(page)
-  }
-
-  /**
-   * Get the script drop zone (the "Your script" area).
-   */
-  private getDropZone() {
-    return this.page.locator('text=Your script').locator('..').locator('..')
-  }
-
-  /**
-   * Get an opcode item from the palette by its text.
-   */
-  private getOpcodeFromPalette(opcode: string) {
-    // Target opcodes only in the palette area.
-    // The palette has category sections with h2 headings (constant, arithmetic, crypto, etc.).
-    // Each category has a parent div containing both the h2 and a div with opcode items.
-    // Use :has(h2) to ensure we're in a category section, then find the opcode.
-    return this.page
-      .locator('div:has(> h2)')
-      .getByText(opcode, { exact: true })
-      .first()
-  }
-
-  /**
-   * Get the drop target area where opcodes should be dragged.
-   */
-  private getScriptArea() {
-    // Target the script container by finding the "Your script" paragraph's sibling div.
-    return this.page.locator('p:has-text("Your script") + div')
   }
 
   /**
@@ -45,12 +15,7 @@ export class OpCodeChallengePage extends BasePage {
    * This will drag OP_2, then OP_PUSH (and fill in PUBKEY(ME)), then OP_CHECKSIG.
    */
   async buildScript(script: string[]): Promise<void> {
-    // Use a very large viewport to ensure the script area has room for all items.
-    await this.page.setViewportSize({ width: 2560, height: 1440 })
-    await this.page.waitForTimeout(200)
-
     const dropZone = this.getScriptArea()
-    this.opPushCount = 0 // Reset counter for each new script build.
 
     let i = 0
     while (i < script.length) {
@@ -59,126 +24,18 @@ export class OpCodeChallengePage extends BasePage {
       if (item === 'OP_PUSH') {
         // For OP_PUSH: drag, then fill script area with push data.
         const pushData = script[i + 1]
-        await this.fillPushDataInPalette(pushData)
         await this.dragOpcode('OP_PUSH', dropZone)
-        await this.fillPushDataInScriptArea(pushData, this.opPushCount)
-        this.opPushCount++
+        await this.fillPushDataInScriptArea(pushData)
         i += 2 // Skip the push data item.
       } else {
         // Drag regular opcode.
         await this.dragOpcode(item, dropZone)
         i += 1
       }
-      // Add delay between drops to allow UI to stabilize.
-      // Longer delay helps react-beautiful-dnd update the DOM correctly.
-      await this.page.waitForTimeout(1000)
     }
     // Wait for script area to fully stabilize after all drops.
-    await this.page.waitForTimeout(1500)
-  }
-
-  /**
-   * Drag an opcode from the palette to the script area using manual mouse operations.
-   * Scrolls the script area to the end before each drop to ensure correct ordering.
-   */
-  private async dragOpcode(opcode: string, target: any): Promise<void> {
-    const source = this.getOpcodeFromPalette(opcode)
-
-    // Wait for both elements to be visible.
-    await source.waitFor({ state: 'visible', timeout: 5000 })
-    await target.waitFor({ state: 'visible', timeout: 5000 })
-
-    // Scroll source into view and wait for layout to settle.
-    await source.scrollIntoViewIfNeeded()
-    await this.page.waitForTimeout(200)
-
-    // Scroll the script area to the far right to ensure new items are appended.
-    await target.evaluate((el: HTMLElement) => {
-      el.scrollLeft = el.scrollWidth
-    })
-    await this.page.waitForTimeout(100)
-
-    const sourceBox = await source.boundingBox()
-    const targetBox = await target.boundingBox()
-
-    if (!sourceBox || !targetBox) {
-      throw new Error('Could not get bounding boxes for drag operation')
-    }
-
-    const sourceX = sourceBox.x + sourceBox.width / 2
-    const sourceY = sourceBox.y + sourceBox.height / 2
-
-    // Drop at the visible right edge of the container.
-    // After scrolling to the end, drop near the right edge of the visible area.
-    const targetX = targetBox.x + targetBox.width - 30
-    const targetY = targetBox.y + targetBox.height / 2
-
-    // Position mouse over source element.
-    await this.page.mouse.move(sourceX, sourceY)
-    await this.page.waitForTimeout(100)
-
-    // Start drag.
-    await this.page.mouse.down()
-    await this.page.waitForTimeout(200) // Hold to initiate drag.
-
-    // Move to target in smooth steps.
-    const steps = 20
-    for (let i = 1; i <= steps; i++) {
-      const x = sourceX + ((targetX - sourceX) * i) / steps
-      const y = sourceY + ((targetY - sourceY) * i) / steps
-      await this.page.mouse.move(x, y)
-      await this.page.waitForTimeout(20)
-    }
-
-    // Hover over target position to ensure drop zone is activated.
-    await this.page.waitForTimeout(300)
-
-    // Release to drop.
-    await this.page.mouse.up()
-
-    // Wait for DOM update.
     await this.page.waitForTimeout(500)
   }
-
-  /**
-   * Fill in the push data in the palette's OP_PUSH textbox before dragging.
-   * Note: This is a no-op since the palette input is read-only and the value
-   * doesn't transfer to the script area. We fill the script area input after dragging.
-   */
-  private async fillPushDataInPalette(_value: string): Promise<void> {
-    // The palette input is read-only (pointer-events-none) and doesn't transfer values.
-    // This method is a no-op since we fill the script area input after dragging.
-  }
-
-  /**
-   * Fill in the push data in the script area's OP_PUSH textbox after dragging.
-   * Uses the LAST PUSH_DATA input since react-beautiful-dnd appends items when
-   * dropped at the far right.
-   * @param value - The value to fill.
-   * @param _index - Not used anymore; we use the last input instead.
-   */
-  private async fillPushDataInScriptArea(
-    value: string,
-    _index: number
-  ): Promise<void> {
-    // Wait for DOM to stabilize after drag.
-    await this.page.waitForTimeout(300)
-    // Find textboxes within the "Your script" area.
-    const scriptArea = this.page
-      .locator('p:has-text("Your script")')
-      .locator('..')
-    const pushInputs = scriptArea.locator('input[placeholder="PUSH_DATA"]')
-    // Use the LAST input since we always append to the end.
-    const pushInput = pushInputs.last()
-    await pushInput.waitFor({ state: 'visible', timeout: 5000 })
-    await pushInput.fill(value)
-    // Click somewhere neutral to blur the input and stabilize the DOM.
-    await this.page.locator('h1').first().click()
-    await this.page.waitForTimeout(100)
-  }
-
-  /** Track how many OP_PUSH items have been added to the script. */
-  private opPushCount = 0
 
   /**
    * Set the initial stack for the opcode challenge.
@@ -291,7 +148,7 @@ export class OpCodeChallengePage extends BasePage {
    */
   async solveFromAnswer(answer: OpcodeAnswer): Promise<void> {
     const script = this.parseScript(answer.script)
-    const initialStack = this.parseStack(answer.initialStack)
+    const initialStack = this.parseScript(answer.initialStack)
 
     // Set next block height if provided (for timelock challenges).
     if (answer.nextBlockHeight) {
@@ -306,7 +163,7 @@ export class OpCodeChallengePage extends BasePage {
 
     // Case 2: Advanced challenge (has secondStack for two-step solve).
     if (answer.secondStack) {
-      const secondStack = this.parseStack(answer.secondStack)
+      const secondStack = this.parseScript(answer.secondStack)
       await this.solveAdvanced(
         script,
         initialStack,
@@ -331,6 +188,117 @@ export class OpCodeChallengePage extends BasePage {
     await this.solvePrePopulated()
   }
 
+  // ---------------------------------------------------------------------------
+  // Private methods
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get an opcode item from the palette by its text.
+   */
+  private getOpcodeFromPalette(opcode: string) {
+    // Target opcodes only in the palette area.
+    // The palette has category sections with h2 headings (constant, arithmetic, crypto, etc.).
+    // Each category has a parent div containing both the h2 and a div with opcode items.
+    // Use :has(h2) to ensure we're in a category section, then find the opcode.
+    return this.page
+      .locator('div:has(> h2)')
+      .getByText(opcode, { exact: true })
+      .first()
+  }
+
+  /**
+   * Get the drop target area where opcodes should be dragged.
+   */
+  private getScriptArea() {
+    // Target the script container by finding the "Your script" paragraph's sibling div.
+    return this.page.locator('p:has-text("Your script") + div')
+  }
+
+  /**
+   * Drag an opcode from the palette to the script area using manual mouse operations.
+   * Scrolls the script area to the end before each drop to ensure correct ordering.
+   */
+  private async dragOpcode(opcode: string, target: any): Promise<void> {
+    const source = this.getOpcodeFromPalette(opcode)
+
+    // Wait for both elements to be visible.
+    await source.waitFor({ state: 'visible', timeout: 5000 })
+    await target.waitFor({ state: 'visible', timeout: 5000 })
+
+    // Scroll source into view and wait for layout to settle.
+    await source.scrollIntoViewIfNeeded()
+    await this.page.waitForTimeout(200)
+
+    // Scroll the script area to the far right to ensure new items are appended.
+    await target.evaluate((el: HTMLElement) => {
+      el.scrollLeft = el.scrollWidth
+    })
+    await this.page.waitForTimeout(100)
+
+    const sourceBox = await source.boundingBox()
+    const targetBox = await target.boundingBox()
+
+    if (!sourceBox || !targetBox) {
+      throw new Error('Could not get bounding boxes for drag operation')
+    }
+
+    const sourceX = sourceBox.x + sourceBox.width / 2
+    const sourceY = sourceBox.y + sourceBox.height / 2
+
+    // Drop at the visible right edge of the container.
+    // After scrolling to the end, drop near the right edge of the visible area.
+    const targetX = targetBox.x + targetBox.width - 30
+    const targetY = targetBox.y + targetBox.height / 4
+
+    // Position mouse over source element.
+    await this.page.mouse.move(sourceX, sourceY)
+    await this.page.waitForTimeout(100)
+
+    // Start drag.
+    await this.page.mouse.down()
+    await this.page.waitForTimeout(200) // Hold to initiate drag.
+
+    // Move to target in smooth steps.
+    const steps = 20
+    for (let i = 1; i <= steps; i++) {
+      const x = sourceX + ((targetX - sourceX) * i) / steps
+      const y = sourceY + ((targetY - sourceY) * i) / steps
+      await this.page.mouse.move(x, y)
+      await this.page.waitForTimeout(20)
+    }
+
+    // Hover over target position to ensure drop zone is activated.
+    await this.page.waitForTimeout(300)
+
+    // Release to drop.
+    await this.page.mouse.up()
+
+    // Wait for DOM update.
+    await this.page.waitForTimeout(500)
+  }
+
+  /**
+   * Fill in the push data in the script area's OP_PUSH textbox after dragging.
+   * Uses the LAST PUSH_DATA input since react-beautiful-dnd appends items when
+   * dropped at the far right.
+   */
+  private async fillPushDataInScriptArea(value: string): Promise<void> {
+    // Wait for DOM to stabilize after drag.
+    await this.page.waitForTimeout(300)
+    // Find textboxes within the "Your script" area.
+    const scriptArea = this.page
+      .locator('p:has-text("Your script")')
+      .locator('..')
+    const pushInputs = scriptArea.locator('input[placeholder="PUSH_DATA"]')
+    // Use the LAST input since we always append to the end.
+    const pushInput = pushInputs.last()
+    await pushInput.waitFor({ state: 'visible', timeout: 5000 })
+    await pushInput.fill(value)
+    // Click somewhere neutral to blur the input and stabilize the DOM.
+    await this.page.locator('h1').first().click()
+    await this.page.waitForTimeout(100)
+  }
+
   /**
    * Parse a space-separated script string into array format for buildScript.
    * Example: "OP_2 OP_PUSH PUBKEY(me)" -> ['OP_2', 'OP_PUSH', 'PUBKEY(me)']
@@ -338,14 +306,5 @@ export class OpCodeChallengePage extends BasePage {
   private parseScript(script: string): string[] {
     if (!script || script.trim() === '') return []
     return script.trim().split(/\s+/)
-  }
-
-  /**
-   * Parse a space-separated stack string into array format.
-   * Example: "0 SIG(me)" -> ['0', 'SIG(me)']
-   */
-  private parseStack(stack: string): string[] {
-    if (!stack || stack.trim() === '') return []
-    return stack.trim().split(/\s+/)
   }
 }

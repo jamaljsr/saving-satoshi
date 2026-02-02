@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-6.spec.ts
 import { expect, test } from '../../fixtures'
 import { getAnswerFromFile } from '../../helpers/answer-loader'
 
@@ -24,8 +23,6 @@ import { getAnswerFromFile } from '../../helpers/answer-loader'
  * - 1 outro
  */
 test.describe('Chapter 6: Building SegWit Transactions', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 6 - normal', async ({
     page,
     auth,
@@ -35,16 +32,14 @@ test.describe('Chapter 6: Building SegWit Transactions', () => {
     authModal,
     language,
   }) => {
+    test.setTimeout(60_000) // 1 minute - scripting challenges take time
+
     // Setup: authenticate via UI, then set progress via API.
     await page.goto('/en')
     await authModal.signUp()
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Set progress to have chapters 1-5 completed via API.
-    await auth.skipToChapter(6)
+    await auth.setProgressToChapter(6)
 
     // Navigate to chapters page and wait for chapter 6 to be unlocked.
     await page.goto('/en/chapters')
@@ -150,12 +145,8 @@ test.describe('Chapter 6: Building SegWit Transactions', () => {
     await page.goto('/en')
     await authModal.signUp()
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Set progress to have chapters 1-5 completed via API.
-    await auth.skipToChapter(6)
+    await auth.setProgressToChapter(6)
 
     // Navigate to chapters page and wait for chapter 6 to be unlocked.
     await page.goto('/en/chapters')

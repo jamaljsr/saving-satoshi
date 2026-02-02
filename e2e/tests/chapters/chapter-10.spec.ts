@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-10.spec.ts
 import { expect, test } from '../../fixtures'
 import { getTransactionAnswer } from '../../helpers/answer-loader'
 
@@ -8,42 +7,11 @@ import { getTransactionAnswer } from '../../helpers/answer-loader'
  * Chapter 10 requires authentication and chapters 1-9 to be completed.
  * Tests use auth.skipToChapter(10) to skip directly to chapter 10.
  *
- * Chapter 10 is about Lightning Network payment channels. The user learns
- * about opening channels, funding transactions, commitment transactions,
- * revocation keys, and making off-chain payments.
- *
- * Lessons (28 total):
- * - 3 intros (intro-1, intro-2, intro-3)
- * - 5 opening-a-channel lessons
- *   - opening-a-channel-1: prefilled (skip)
- *   - opening-a-channel-2: transaction challenge
- *   - opening-a-channel-3: narrative
- *   - opening-a-channel-4: transaction challenge
- *   - opening-a-channel-5: narrative
- * - 6 updating-the-state lessons
- *   - updating-the-state-1: transaction challenge
- *   - updating-the-state-2: narrative
- *   - updating-the-state-3: transaction challenge
- *   - updating-the-state-4: narrative
- *   - updating-the-state-5: transaction challenge
- *   - updating-the-state-6: narrative
- * - 8 making-a-payment lessons
- *   - making-a-payment-1: narrative
- *   - making-a-payment-2: transaction challenge
- *   - making-a-payment-3: narrative
- *   - making-a-payment-4: narrative
- *   - making-a-payment-5: transaction challenge
- *   - making-a-payment-6: prefilled (skip)
- *   - making-a-payment-7: narrative
- *   - making-a-payment-8: two-step transaction challenge
- * - 6 outros (outro-1 through outro-6)
- *
- * Answers are loaded from JSON files in e2e/answers/chapter10/.
+ * Chapter 10 is about Lightning Network payment channels.
+ * Challenge types: 9 transaction challenges (2 prefilled, 6 single-step, 1 two-step).
  */
 
 test.describe('Chapter 10: Payment Channels', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 10', async ({
     page,
     auth,
@@ -59,12 +27,8 @@ test.describe('Chapter 10: Payment Channels', () => {
     await page.goto('/en')
     await authModal.signUp()
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Set progress to have chapters 1-9 completed via API.
-    await auth.skipToChapter(10)
+    await auth.setProgressToChapter(10)
 
     // Navigate to chapters page and wait for chapter 10 to be unlocked.
     await page.goto('/en/chapters')

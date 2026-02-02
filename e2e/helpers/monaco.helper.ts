@@ -1,4 +1,3 @@
-// e2e/helpers/monaco.helper.ts
 import { Page } from '@playwright/test'
 import { MONACO_EDITOR, MONACO_TEXTAREA } from './selectors'
 

@@ -1,4 +1,3 @@
-// e2e/tests/chapters/chapter-5.spec.ts
 import { expect, test } from '../../fixtures'
 import {
   getAnswerFromFile,
@@ -18,8 +17,6 @@ import {
  * - 7 scripting challenges (derive-message-7, verify-signature-2, verify-signature-5, validate-signature-1 through 4)
  */
 test.describe('Chapter 5: Will the Real Satoshi Please Stand Up', () => {
-  test.describe.configure({ mode: 'serial' })
-
   test('complete chapter 5', async ({
     page,
     auth,
@@ -37,12 +34,8 @@ test.describe('Chapter 5: Will the Real Satoshi Please Stand Up', () => {
     await page.goto('/en')
     await authModal.signUp('red spacesuit')
 
-    // Sync token from browser to auth helper for API calls.
-    await page.waitForTimeout(1_000)
-    await auth.syncFromBrowser()
-
     // Now set progress to have chapters 1-4 completed via API.
-    await auth.skipToChapter(5)
+    await auth.setProgressToChapter(5)
 
     // Navigate to chapters page and wait for chapter 5 to be unlocked.
     await page.goto('/en/chapters')
