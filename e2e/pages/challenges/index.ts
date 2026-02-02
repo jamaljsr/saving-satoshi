@@ -5,4 +5,7 @@ export { HashChallengePage } from './hash.challenge'
 export { HashRateChallengePage } from './hashrate.challenge'
 export { TerminalChallengePage } from './terminal.challenge'
 export { OpCodeChallengePage } from './opcode.challenge'
-export { TransactionsChallengePage } from './transactions.challenge'
+export {
+  TransactionsChallengePage,
+  type TransactionAnswer,
+} from './transactions.challenge'
